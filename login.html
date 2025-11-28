@@ -1,17 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - Trilha dos Doces</title>
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/login.css" />
 </head>
+
 <body>
   <main class="login-page">
     <section class="login-card">
       <div class="login-card__header">
-        <img src="https://servidor-estaticos-ashy.vercel.app/trilhadoces.svg" alt="Trilha dos Doces">
+        <a href="index.html">
+          <img src="https://servidor-estaticos-ashy.vercel.app/trilhadoces.svg" alt="Trilha dos Doces" />
+        </a>
         <h1>Entrar</h1>
         <p>Acesse para continuar sua trilha de sabores.</p>
       </div>
@@ -19,22 +23,22 @@
       <form class="login-form" id="formLogin">
         <label>
           Email
-          <input type="email" name="email" id="email" required>
+          <input type="email" name="email" id="email" required />
         </label>
 
         <label>
           Senha
-          <input type="password" name="senha" id="senha" required>
+          <input type="password" name="senha" id="senha" required />
         </label>
 
         <button type="submit" class="btn btn--primary">Entrar</button>
 
-        <p class="login-form__alert" id="loginErro aria-live="polite"></p>
+        <p class="login-form__alert" id="loginErro" aria-live="polite"></p>
       </form>
     </section>
   </main>
 
   <script src="js/login.js"></script>
 </body>
-</html>
 
+</html>
