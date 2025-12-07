@@ -110,7 +110,7 @@ const Auth = {
       return false;
     }
 
-    if (!this.eAdmin()) {
+    if (!this.EhAdmin()) {
       alert("🚫 Acesso negado. Esta área é restrita a administradores.");
       window.location.href = "index.html";
       return false;

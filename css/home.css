@@ -110,6 +110,80 @@
   margin-bottom: var(--space-md);
 }
 
+.section--regras {
+  background: linear-gradient(135deg, #fff8e1 0%, #fffaf2 100%);
+}
+
+.card-info {
+  background: white;
+  padding: 2rem 1.5rem;
+  border-radius: var(--radius-medio);
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+}
+
+.card-info:hover {
+  transform: translateY(-5px);
+}
+
+.card-info__icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.card-info h3 {
+  color: var(--cor-marrom);
+  margin-bottom: 0.5rem;
+}
+
+.card-info p {
+  font-size: 0.9rem;
+  color: #7a6a55;
+}
+
+.regras-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.regra-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--radius-medio);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.regra-numero {
+  background: var(--cor-amarelo);
+  color: var(--cor-marrom);
+  font-weight: 700;
+  font-size: 1.5rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.regra-item h3 {
+  color: var(--cor-marrom);
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.regra-item p {
+  margin: 0;
+  color: #7a6a55;
+  font-size: 0.95rem;
+}
+
 .section--avaliacoes {
   background-color: var(--cor-fundo);
 }
@@ -216,7 +290,6 @@
 }
 
 @media (max-width: 768px) {
-
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 150px;
