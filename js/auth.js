@@ -27,7 +27,9 @@ const Auth = {
         throw new Error("Nome é obrigatório");
       }
 
-      if (!dados.email || dados.email.trim() === "") {
+      const emailNormalizado = dados.email.trim().toLowerCase();
+
+      if (!emailNormalizado) {
         throw new Error("Email é obrigatório");
       }
 
@@ -35,12 +37,17 @@ const Auth = {
         throw new Error("Senha deve ter no mínimo 6 caracteres");
       }
 
+      const usuarioExistente = DB.usuarios.getByEmail(emailNormalizado);
+      if (usuarioExistente) {
+        throw new Error("Email já cadastrado");
+      }
+
       const novoUsuario = DB.usuarios.create({
-        nome: dados.nome,
-        email: dados.email,
+        nome: dados.nome.trim(),
+        email: emailNormalizado, // 👈 Aqui!
         senha: dados.senha,
-        telefone: dados.telefone || "",
-        endereco: dados.endereco || "",
+        telefone: dados.telefone ? dados.telefone.trim() : "",
+        endereco: dados.endereco ? dados.endereco.trim() : "",
         tipo: "cliente",
       });
 
@@ -57,7 +64,9 @@ const Auth = {
         throw new Error("Email e senha são obrigatórios");
       }
 
-      const usuario = DB.usuarios.getByEmail(email);
+      const emailNormalizado = email.trim().toLowerCase();
+
+      const usuario = DB.usuarios.getByEmail(emailNormalizado);
 
       if (!usuario) {
         throw new Error("Usuário não encontrado");
@@ -119,7 +128,6 @@ const Auth = {
     }
   },
 
-  // Atualiza menu de navegação baseado em quem está logado
   atualizarMenu() {
     const usuario = this.getUsuarioLogado();
     const btnEntrar = document.querySelector('a[href="login.html"]');
