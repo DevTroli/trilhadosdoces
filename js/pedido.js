@@ -1,98 +1,145 @@
+if (!Auth.estaLogado()) {
+  alert("⚠️ Faça login para fazer pedidos");
+  window.location.href = "login.html";
+}
+
 const listaPedido = document.getElementById("listaPedido");
 const totalPedido = document.getElementById("totalPedido");
 const btnFinalizar = document.getElementById("btnFinalizar");
 const mensagemPedido = document.getElementById("mensagemPedido");
 
+let carrinho = [];
 let total = 0;
 
-// estado vazio inicial
 mostrarCarrinhoVazio();
 
-/* ADICIONAR PRODUTO BÁSICO */
-document.querySelectorAll(".btn-add").forEach((botao) => {
-  botao.addEventListener("click", function () {
-    const card = this.closest(".card-produto");
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("btn-add")) {
+    const card = e.target.closest(".card-produto");
+
+    const nomeUnico = card.dataset.nome.replace(/\s+/g, "").toLowerCase();
+    const produtoId = `${nomeUnico}_${Date.now()}`;
     const nome = card.dataset.nome;
     const preco = Number(card.dataset.preco);
     const imgSrc = card.dataset.img;
 
-    adicionarItem(nome, preco, imgSrc);
-    somarTotal(preco);
-    limparMensagem();
-  });
+    console.log("🛒 COMPRA:", { produtoId, nome, preco });
+
+    adicionarItem(produtoId, nome, preco, imgSrc);
+  }
 });
 
-function adicionarItem(nome, preco, imgSrc) {
-  // se era a mensagem de vazio, limpa
-  if (listaPedido.firstElementChild && listaPedido.firstElementChild.classList.contains("pedido-vazio")) {
-    listaPedido.innerHTML = "";
+function adicionarItem(produtoId, nome, preco, imgSrc) {
+  console.log(`➕ Tentando adicionar: ${nome} (ID: ${produtoId})`);
+
+  const itemExistente = carrinho.find((item) => item.produtoId === produtoId);
+
+  if (itemExistente) {
+    itemExistente.quantidade += 1;
+    console.log(`📈 Incrementou ${nome} para ${itemExistente.quantidade}`);
+  } else {
+    const novoItem = {
+      produtoId: produtoId,
+      nome: nome,
+      preco: preco,
+      imgSrc: imgSrc,
+      quantidade: 1,
+    };
+    carrinho.push(novoItem);
+    console.log(`🆕 Adicionou novo: ${nome}`);
   }
 
-  const li = document.createElement("li");
-  li.classList.add("pedido-item");
-
-  li.innerHTML = `
-    <img src="${imgSrc}" alt="${nome}">
-    <div class="pedido-item__info">
-      <span class="pedido-item__nome">${nome}</span>
-      <span class="pedido-item__preco">R$ ${preco.toFixed(2).replace(".", ",")}</span>
-    </div>
-    <div class="pedido-item__acoes">
-      <button class="pedido-item__remover">remover</button>
-    </div>
-  `;
-
-  // botão remover: tira o li e atualiza total
-  li.querySelector(".pedido-item__remover").addEventListener("click", () => {
-    listaPedido.removeChild(li);
-    somarTotal(-preco);
-
-    if (listaPedido.children.length === 0) {
-      mostrarCarrinhoVazio();
-    }
-  });
-
-  listaPedido.appendChild(li);
+  atualizarCarrinho();
 }
 
-/* TOTAL MUITO SIMPLES */
-function somarTotal(valor) {
-  total += valor;
-  if (total < 0) total = 0;
+function atualizarCarrinho() {
+  if (carrinho.length === 0) {
+    mostrarCarrinhoVazio();
+    return;
+  }
+
+  listaPedido.innerHTML = "";
+
+  total = 0;
+
+  carrinho.forEach((item, index) => {
+    const subtotal = item.preco * item.quantidade;
+    total += subtotal;
+
+    const li = document.createElement("li");
+    li.classList.add("pedido-item");
+
+    li.innerHTML = `
+      <img src="${item.imgSrc}" alt="${item.nome}">
+      <div class="pedido-item__info">
+        <span class="pedido-item__nome">${item.nome}</span>
+        <span class="pedido-item__preco">R$ ${item.preco.toFixed(2).replace(".", ",")} x ${item.quantidade}</span>
+      </div>
+      <div class="pedido-item__acoes">
+        <button class="pedido-item__remover" data-index="${index}">remover</button>
+      </div>
+    `;
+
+    listaPedido.appendChild(li);
+  });
+
   totalPedido.textContent = `R$ ${total.toFixed(2).replace(".", ",")}`;
 }
 
-/* MENSAGENS */
+listaPedido.addEventListener("click", (e) => {
+  if (e.target.classList.contains("pedido-item__remover")) {
+    const index = Number(e.target.dataset.index);
+    carrinho.splice(index, 1); // Remove do array
+    atualizarCarrinho();
+  }
+});
+
+btnFinalizar.addEventListener("click", () => {
+  if (carrinho.length === 0) {
+    alert("Seu carrinho está vazio. Adicione itens antes de finalizar.");
+    return;
+  }
+
+  const usuario = Auth.getUsuarioLogado();
+
+  const pedido = {
+    clienteId: usuario.id,
+    clienteNome: usuario.nome,
+    clienteTelefone: usuario.telefone || "Não informado",
+    itens: carrinho,
+    total: total,
+    tipoPedido: "retirada",
+    observacoes: "",
+  };
+
+  try {
+    const novoPedido = DB.pedidos.create(pedido);
+
+    carrinho = [];
+    total = 0;
+    atualizarCarrinho();
+
+    mensagemPedido.className = "pedido-msg pedido-msg--sucesso";
+    mensagemPedido.textContent = `✅ Pedido #${novoPedido.id} realizado com sucesso!`;
+
+    setTimeout(() => {
+      mensagemPedido.textContent = "";
+      mensagemPedido.className = "pedido-msg";
+    }, 5000);
+  } catch (error) {
+    mensagemPedido.className = "pedido-msg pedido-msg--erro";
+    mensagemPedido.textContent = `❌ Erro: ${error.message}`;
+  }
+});
+
 function mostrarCarrinhoVazio() {
-  const li = document.createElement("li");
-  li.classList.add("pedido-vazio");
-  li.textContent = "Seu carrinho está vazio.";
-  listaPedido.appendChild(li);
+  listaPedido.innerHTML =
+    '<li class="pedido-vazio">Seu carrinho está vazio.</li>';
+  total = 0;
+  totalPedido.textContent = "R$ 0,00";
 }
 
 function limparMensagem() {
   mensagemPedido.textContent = "";
   mensagemPedido.className = "pedido-msg";
 }
-
-/* FINALIZAR PEDIDO */
-btnFinalizar.addEventListener("click", () => {
-  const temItens = Array.from(listaPedido.children).some(
-    (li) => !li.classList.contains("pedido-vazio")
-  );
-
-  if (!temItens) {
-    alert("Seu carrinho está vazio. Adicione itens antes de finalizar.");
-    return;
-  }
-
-  alert("Pedido finalizado com sucesso!");
-
-  // limpa lista e zera total
-  listaPedido.innerHTML = "";
-  mostrarCarrinhoVazio();
-  total = 0;
-  totalPedido.textContent = "R$ 0,00";
-});
-
-

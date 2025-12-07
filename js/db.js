@@ -76,7 +76,7 @@ const DB = {
       const produtos = this.getAll();
       
       const novoProduto = {
-        id: Date.now(),
+        id: produto.id.toString(),
         nome: produto.nome,
         descricao: produto.descricao || '',
         preco: produto.preco,

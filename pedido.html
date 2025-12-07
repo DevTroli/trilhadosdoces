@@ -1,19 +1,19 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pedido - Trilha dos Doces</title>
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/pedido.css">
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/pedido.css" />
 </head>
 
 <body>
   <header class="pedido-header">
     <div class="container pedido-header__content">
       <a href="index.html" class="pedido-header__logo">
-        <img src="https://servidor-estaticos-ashy.vercel.app/trilhadoces.svg" alt="Trilha dos Doces">
+        <img src="https://servidor-estaticos-ashy.vercel.app/trilhadoces.svg" alt="Trilha dos Doces" />
       </a>
       <span class="pedido-header__titulo">Resumo do pedido</span>
     </div>
@@ -22,45 +22,8 @@
     <section class="pedido-produtos">
       <h1 class="section-title">Monte seu pedido</h1>
 
-      <div class="cards">
-        <article class="card-produto" data-nome="CupCakes" data-preco="12.90"
-          data-img="https://servidor-estaticos-ashy.vercel.app/cupcake.png">
-          <div class="card-produto__img">
-            <img src="https://servidor-estaticos-ashy.vercel.app/cupcake.png" alt="CupCakes">
-          </div>
-          <div class="card-produto__body">
-            <h3>CupCakes</h3>
-            <p>Textinho explicando o produto.</p>
-            <p class="card-produto__preco">R$ 12,90</p>
-            <button class="btn btn--primary btn-add">Adicionar ao pedido</button>
-          </div>
-        </article>
-
-        <article class="card-produto" data-nome="Kit salgados" data-preco="49.90"
-          data-img="https://servidor-estaticos-ashy.vercel.app/salgados.png">
-          <div class="card-produto__img">
-            <img src="https://servidor-estaticos-ashy.vercel.app/salgados.png" alt="Kit salgados">
-          </div>
-          <div class="card-produto__body">
-            <h3>Kit salgados</h3>
-            <p>Textinho explicando o produto.</p>
-            <p class="card-produto__preco">R$ 49,90</p>
-            <button class="btn btn--primary btn-add">Adicionar ao pedido</button>
-          </div>
-        </article>
-
-        <article class="card-produto" data-nome="Bolo personalizado" data-preco="89.90"
-          data-img="https://servidor-estaticos-ashy.vercel.app/bolo.png">
-          <div class="card-produto__img">
-            <img src="https://servidor-estaticos-ashy.vercel.app/bolo.png" alt="Bolo personalizado Gaby">
-          </div>
-          <div class="card-produto__body">
-            <h3>Bolo personalizado</h3>
-            <p>Textinho explicando o produto.</p>
-            <p class="card-produto__preco">R$ 89,90</p>
-            <button class="btn btn--primary btn-add">Adicionar ao pedido</button>
-          </div>
-        </article>
+      <div class="cards" id="listaProdutos">
+        <!-- Produtos serão inseridos aqui via JavaScript -->
       </div>
     </section>
 
@@ -70,16 +33,41 @@
         <!-- itens adicionados via JS -->
       </ul>
 
-      <p class="pedido-total">
-        Total: <span id="totalPedido">R$ 0,00</span>
-      </p>
+      <p class="pedido-total">Total: <span id="totalPedido">R$ 0,00</span></p>
 
-      <button id="btnFinalizar" class="btn btn--primary">Finalizar pedido</button>
+      <button id="btnFinalizar" class="btn btn--primary">
+        Finalizar pedido
+      </button>
       <p class="pedido-msg" id="mensagemPedido" aria-live="polite"></p>
     </aside>
   </main>
 
+  <script src="js/db.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/produtos.js"></script>
   <script src="js/pedido.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const usuario = Auth.getUsuarioLogado();
+      if (usuario) {
+        const headerContent = document.querySelector(
+          ".pedido-header__content",
+        );
+        const statusSpan = document.createElement("span");
+        statusSpan.className = "pedido-header__status";
+        statusSpan.textContent = usuario.isAdmin
+          ? "👑 Admin"
+          : `Olá, ${usuario.nome}`;
+        headerContent.appendChild(statusSpan);
+      }
+
+      ProdutosUI.renderizar("listaProdutos");
+
+      setTimeout(() => {
+        console.log("✅ Produtos renderizados");
+      }, 100);
+    });
+  </script>
 </body>
 
 </html>
