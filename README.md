@@ -9,8 +9,8 @@
 ### 🎯 Principais Características
 
 - **Sistema de Autenticação**: Login, cadastro e controle de sessões
-- **Catálogo **: Visualização de produtos com fotos e descrições
-- **Carrinho de Compras **: Adicione e remova itens instantaneamente
+- **Catálogo**: Visualização de produtos com fotos e descrições
+- **Carrinho de Compras**: Adicione e remova itens instantaneamente
 - **Painel Administrativo**: Gestão completa de produtos, pedidos e clientes
 - **Dashboard com Métricas**: Visualização de estatísticas e desempenho do negócio
 - **Sistema de Pedidos**: Três formas de pagamento (WhatsApp, PIX, Retirada)
